@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Day 3 Assignment</title>
+    <style>
+        table ,tr ,th,td
+        {
+            border-collapse: collapse;
+            border: 1px solid gray;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    
+    <script>
+
+        //Question 1:
+        var pressed = false;
+        function isPressed(id)
+        {
+            pressed = true;
+            var promise = new Promise(function(resolve, reject) {
+            if(pressed) {
+                resolve();
+            } 
+            else {
+                reject();
+            }
+        });
+        promise.
+            then(function () {
+                document.getElementById("login_status").innerHTML = `Login Successful !`
+            }).
+            catch(function () {
+                // By the nature of the question this case will never be achieved.
+                document.getElementById("login_status").innerHTML = `Login Not Successful !`
+            });
+        }
+
+        //Question 2:
+
+        var req = new XMLHttpRequest();
+        req.open('GET','https://raw.githubusercontent.com/arunav1999/FrontendDay3Assignment/main/quotes.json');
+        req.responseType = 'text';
+        req.send();
+        req.onload = function()
+        {
+            var quotesJSON = req.responseText;
+            var quotesObj = JSON.parse(quotesJSON);
+            var allQuotes = quotesObj['quotes'];
+            for(let i = 0;i < allQuotes.length;i++)
+            {
+                document.getElementById("content_table").innerHTML += `
+                <tr>
+                    <td>${allQuotes[i]['quote']}</td>
+                    <td>${allQuotes[i]['author']}</td>
+                </tr>
+                `
+            }
+            
+        }
+
+        //Question 3:
+
+        function validateForm()
+        {
+            var name = document.getElementById("name").value;
+            var email = document.getElementById("email").value;
+            var phone = document.getElementById("phone").value;
+            var dob = document.getElementById("dob").value;
+            var password = document.getElementById("password").value;
+            
+            //validation logic
+
+            //Validating name
+            validateName(name);
+
+            //validating email
+            validateEmail(email);
+
+            //validate mobile number
+            validatePhone(phone)
+
+            //validate password
+            validatePassword(password);
+
+            //validate Age
+            validateAge(dob);
+
+            if(!(validateName(name) && validateEmail(email) && validatePassword(password) && validatePhone(phone) && validateAge(dob)))
+            {
+                document.getElementById("validation_status").innerHTML = `<h1 style="color:red;">There are errors in the form.</h>`;
+            }
+            else
+            {
+                document.getElementById("validation_status").innerHTML = `<h1 style="color:green;">Form is Okay, no errors</h>`;
+            }
+
+        }
+        function validatePhone(phone)
+        {
+            if(!(phone.length === 10 && isNaN(phone) === false))
+            {
+                alert('Invalid mobile number');
+                return false;
+            }
+            return true;
+        }
+
+        function validateName(name)
+        {
+            if(name.length > 25)
+            {
+                alert('Name contains more than 25 Characters');
+                return false;
+            }
+            return true;
+        }
+
+        function validateEmail(email) 
+        {
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+            {
+                return (true);
+            }
+                alert("You have entered an invalid email address!")
+                return (false);
+        }
+        function validatePassword(password)
+        {
+            /* 
+                Regex to check if a string
+                contains uppercase, lowercase
+                special character & numeric value
+
+            */
+            //console.log(password)
+            var p = document.getElementById("password").value;
+            password = p;
+            if(password.length >= 8 && password.length <= 16)
+            {
+                var pattern = new RegExp(
+          "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+_!@#$%^&*.,?]).+$"
+        ,"g");
+                console.log("password: "+password);
+                if(!(pattern.test(password))) 
+                {
+                    //console.log("Pattern match:"+pattern.test(password));
+                    alert("Invalid Password");
+                    return false;
+                }
+                else
+                {
+                    console.log("else part");
+                } 
+            }
+            else
+            {
+                alert('Password length requirement not satisfied');
+                return false;
+            }
+            return true;
+            
+        }
+
+        function validateAge(dateString) 
+        {
+            var today = new Date();
+            var birthDate = new Date(dateString);
+            var age = today.getFullYear() - birthDate.getFullYear();
+            var m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            if(!(age > 13))
+            {
+                alert('You are under age.');
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+    <h1>Question 1:</h1>
+    <h1 id="login_status">Waiting for login</h1>
+    <button id="login_button" onclick="isPressed(this)">Login</button>
+    <h1>Question 2:</h1>
+    <table id="content_table">
+        <tr>
+            <th>Quote</th>
+            <th>Author</th>
+        </tr>
+    </table>
+
+    <h1>Question 3:</h1>
+    <form onsubmit="validateForm();return false" >
+        <table>
+            <tr>
+                <td><label>Name</label></td>
+                <td><input type="name" id="name" required></input></td>
+            </tr>
+            <tr>
+                <td><label>Email</label></td>
+                <td><input type="text" id="email" required></input></td>
+                <!-- Intentionally not using input type as email, so that our 
+                     validation function gets invoked and not the default HTML/Browser one.
+                 -->
+            </tr>
+            <tr>
+                <td><label>Phone</label></td>
+                <td><input type="text" id="phone" required></input></td>
+                <!-- Intentionally not using input type as number, so that our 
+                     validation function gets invoked and not the default HTML/Browser one.
+                 -->
+            </tr>
+            <tr>
+                <td><label>Date of Birth</label></td>
+                <td><input type="date" id="dob" required></input></td>
+            </tr>
+            <tr>
+                <td><label>Password</label></td>
+                <td><input type="password" id="password" required></input></td>
+            </tr>
+        </table><br>
+        <input type="submit" value="Validate form"></input>
+    </form>
+    <h1 id="validation_status">Form validation status:</h1>
+</body>
+</html>

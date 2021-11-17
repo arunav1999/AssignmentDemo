@@ -19,10 +19,19 @@
     <script>
 
         //Question 1:
-        var pressed = false;
-        function isPressed(id)
+        var pressed = true;
+        function demoError(id)
+        {
+            pressed = false;
+        }
+        function demoSuccess(id)
         {
             pressed = true;
+        }
+
+        function isPressed(id)
+        {
+            //pressed = true;
             var promise = new Promise(function(resolve, reject) {
             if(pressed) {
                 resolve();
@@ -31,13 +40,15 @@
                 reject();
             }
         });
+        
         promise.
             then(function () {
-                document.getElementById("login_status").innerHTML = `Login Successful !`
+                document.getElementById("login_status").innerHTML = `Welcome!`
             }).
             catch(function () {
                 // By the nature of the question this case will never be achieved.
-                document.getElementById("login_status").innerHTML = `Login Not Successful !`
+                //BUT I have added two additional buttons to demo this case also.
+                document.getElementById("login_status").innerHTML = `Something went wrong`
             });
         }
 
@@ -136,7 +147,6 @@
                 Regex to check if a string
                 contains uppercase, lowercase
                 special character & numeric value
-
             */
             //console.log(password)
             var p = document.getElementById("password").value;
@@ -187,6 +197,13 @@
     </script>
     <h1>Question 1:</h1>
     <h1 id="login_status">Waiting for login</h1>
+    <p style="font-size: larger;">Please Press Demo Success button to demonstrate successfull login before pressing
+        the Login button and to demonstrate failed login press Demo Error before
+        pressing the Login button. The logic is handled using Promises only.<br>
+        NOTE: Because of the nature of the question on pressing the Login button, it would have always resulted to a successfull login.
+    </p>
+    <button id="login_button" onclick="demoSuccess(this)">Demo Success</button>
+    <button id="login_button" onclick="demoError(this)">Demo Error</button><br><br>
     <button id="login_button" onclick="isPressed(this)">Login</button>
     <h1>Question 2:</h1>
     <table id="content_table">
